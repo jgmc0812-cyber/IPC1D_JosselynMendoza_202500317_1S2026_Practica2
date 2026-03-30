@@ -21,6 +21,7 @@ public class PanelControl extends JPanel {
     private JComboBox<String> cmbVelocidad;
     private JButton btnIniciar;
     private JButton btnDetener;
+    private JButton btnReiniciar;
 
     public PanelControl(DatosOrdenamiento datos,
                         PanelVisualizacion panelVisualizacion,
@@ -32,7 +33,7 @@ public class PanelControl extends JPanel {
     }
 
     private void initComponents() {
-        setLayout(new GridLayout(10, 1, 5, 5));
+        setLayout(new GridLayout(11, 1, 5, 5));
         setBackground(new Color(30, 30, 30));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -107,18 +108,25 @@ public class PanelControl extends JPanel {
         panelAcciones.add(btnDetener);
         add(panelAcciones);
 
+        // Botón reiniciar separado
+        btnReiniciar = new JButton("Reiniciar");
+        btnReiniciar.setBackground(new Color(0, 100, 150));
+        btnReiniciar.setForeground(Color.WHITE);
+        add(btnReiniciar);
+
         // Acciones de los botones
         btnCargar.addActionListener(e -> cargarDatos());
         btnAleatorio.addActionListener(e -> generarAleatorio());
         btnIniciar.addActionListener(e -> iniciarOrdenamiento());
         btnDetener.addActionListener(e -> detenerOrdenamiento());
+        btnReiniciar.addActionListener(e -> reiniciarTodo());
     }
 
     private void cargarDatos() {
         String texto = txtDatos.getText().trim();
         if (texto.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Por favor ingresá los datos.", 
+            JOptionPane.showMessageDialog(this,
+                "Por favor ingresá los datos.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -131,18 +139,18 @@ public class PanelControl extends JPanel {
             datos.setArreglo(arreglo);
             datos.setColores(new int[arreglo.length]);
             panelVisualizacion.actualizar(datos);
-            JOptionPane.showMessageDialog(this, 
-                "Datos cargados correctamente.", 
+            JOptionPane.showMessageDialog(this,
+                "Datos cargados correctamente.",
                 "Éxito", JOptionPane.INFORMATION_MESSAGE);
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, 
-                "Solo se permiten números enteros separados por coma.", 
+            JOptionPane.showMessageDialog(this,
+                "Solo se permiten números enteros separados por coma.",
                 "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void generarAleatorio() {
-        int n = (int) (Math.random() * 26) + 5; // entre 5 y 30
+        int n = (int) (Math.random() * 26) + 5;
         int[] arreglo = new int[n];
         for (int i = 0; i < n; i++) {
             arreglo[i] = (int) (Math.random() * 100) + 1;
@@ -155,11 +163,14 @@ public class PanelControl extends JPanel {
 
     private void iniciarOrdenamiento() {
         if (datos.getArreglo() == null || datos.getArreglo().length == 0) {
-            JOptionPane.showMessageDialog(this, 
-                "Primero cargá los datos.", 
+            JOptionPane.showMessageDialog(this,
+                "Primero cargá los datos.",
                 "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        // Restaurar arreglo original
+        datos.setArreglo(datos.getArregloOriginal().clone());
 
         // Configurar opciones
         datos.setAlgoritmo((String) cmbAlgoritmo.getSelectedItem());
@@ -188,6 +199,21 @@ public class PanelControl extends JPanel {
         if (hilo != null) {
             hilo.detener();
         }
+        btnIniciar.setEnabled(true);
+        btnDetener.setEnabled(false);
+    }
+
+    private void reiniciarTodo() {
+        if (hilo != null) {
+            hilo.detener();
+        }
+        if (datos.getArregloOriginal() != null) {
+            datos.setArreglo(datos.getArregloOriginal().clone());
+            datos.setColores(new int[datos.getArreglo().length]);
+        }
+        datos.reiniciarEstadisticas();
+        panelVisualizacion.actualizar(datos);
+        panelEstadisticas.actualizar(datos);
         btnIniciar.setEnabled(true);
         btnDetener.setEnabled(false);
     }
