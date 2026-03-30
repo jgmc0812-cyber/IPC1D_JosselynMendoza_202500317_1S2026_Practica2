@@ -7,6 +7,7 @@ public class DatosOrdenamiento {
     // Atributos
     private int[] arreglo;
     private int[] arregloOriginal;
+    private int[] colores;
     private int comparaciones;
     private int intercambios;
     private int iteraciones;
@@ -22,6 +23,7 @@ public class DatosOrdenamiento {
         algoritmo = "Bubble Sort";
         orden = "Ascendente";
         velocidad = 0;
+        colores = new int[0];
     }
     
     //get y set del arreglo
@@ -93,11 +95,21 @@ public class DatosOrdenamiento {
         this.velocidad = velocidad;
     }
     
+    //get y set de colores
+    public int[] getColores() {
+    return colores;
+    }
+
+    public void setColores(int[] colores) {
+    this.colores = colores;
+    }
+    
     //reinicia los contadores
     public void reiniciarEstadisticas(){
         comparaciones = 0;
         iteraciones = 0;
         intercambios = 0;
     }
+    
     
 }
