@@ -28,6 +28,8 @@ public class HiloOrdenamiento extends Thread {
     @Override
     public void run() {
         datos.reiniciarEstadisticas();
+        long inicio = System.currentTimeMillis();
+        
         String algoritmo = datos.getAlgoritmo();
 
         if (algoritmo.equals("Bubble Sort")) {
@@ -40,6 +42,14 @@ public class HiloOrdenamiento extends Thread {
             QuickSort quick = new QuickSort();
             quick.quickSort(datos, 0, datos.getArreglo().length - 1, this);
         }
+        
+        long tiempoTotal = System.currentTimeMillis() - inicio;
+        reporte.GeneradorReporte.generarReporte(datos, tiempoTotal);
+    
+        SwingUtilities.invokeLater(() -> {
+            panelVisualizacion.actualizar(datos);
+            panelEstadisticas.actualizar(datos);
+        });
     }
 
     public void actualizarVista() {

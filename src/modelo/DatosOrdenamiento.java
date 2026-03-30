@@ -73,7 +73,7 @@ public class DatosOrdenamiento {
         return algoritmo;
     }
     
-    public void setAlgortimo(String algoritmo){
+    public void setAlgoritmo(String algoritmo){
         this.algoritmo = algoritmo;
     }
     
